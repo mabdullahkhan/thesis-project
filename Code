@@ -1,0 +1,70 @@
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
+#include <DHT_U.h>
+
+// Pin Definitions
+#define DHTPIN 22       // DHT22 data pin
+#define DHTTYPE DHT22   // DHT 22 (AM2302)
+#define TRIG_PIN 18     // HC-SR04 trigger pin
+#define ECHO_PIN 19     // HC-SR04 echo pin
+
+// Initialize DHT sensor
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+  
+  dht.begin();
+
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  
+  Serial.println("ESP32 Sensor Monitor Started");
+}
+
+void loop() {
+  // Read Temperature and Humidity
+  float humidity = dht.readHumidity();
+  float temperature = dht.readTemperature(); // Celsius
+
+  // Read Ultrasonic Distance
+  long duration;
+  float distance_cm;
+
+  // Trigger the ultrasonic sensor
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  // Read the echo pin
+  duration = pulseIn(ECHO_PIN, HIGH);
+
+  // Calculate distance (cm)
+  distance_cm = duration * 0.0343 / 2;
+
+  // Show Data
+  Serial.println("------ SENSOR READINGS ------");
+
+  if (isnan(humidity) || isnan(temperature)) {
+    Serial.println("Failed to read from DHT22 sensor!");
+  } else {
+    Serial.print("Temperature: ");
+    Serial.print(temperature);
+    Serial.println(" °C");
+
+    Serial.print("Humidity: ");
+    Serial.print(humidity);
+    Serial.println(" %");
+  }
+
+  Serial.print("Water Level Distance: ");
+  Serial.print(distance_cm);
+  Serial.println(" cm");
+
+  Serial.println("-----------------------------\n");
+
+  delay(2000); // Wait 2 seconds before next reading
+}
