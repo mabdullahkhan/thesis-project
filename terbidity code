@@ -1,0 +1,17 @@
+#define TURBIDITY_PIN 34
+
+void setup() {
+  Serial.begin(115200);
+}
+
+void loop() {
+  int sensorValue = analogRead(TURBIDITY_PIN);
+  float voltage = sensorValue * (3.3 / 4095.0);  // ADC to voltage
+
+  Serial.print("Raw: ");
+  Serial.print(sensorValue);
+  Serial.print(" | Voltage: ");
+  Serial.println(voltage, 3);
+
+  delay(1000);
+}
