@@ -1,0 +1,174 @@
+<html>
+<head>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Agency+FB:wght@700&display=swap');
+
+    body {
+      font-family: 'Agency FB', 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #e0f7fa 0%, #80deea 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    /* Water ripple circles */
+    .bg-circle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.18;
+      z-index: 0;
+      pointer-events: none;
+      animation: float 12s infinite alternate;
+    }
+    .bg-circle1 {
+      width: 340px; height: 340px;
+      left: -120px; top: 60px;
+      background: radial-gradient(circle, #4dd0e1 60%, #e0f7fa 100%);
+      animation-delay: 0s;
+    }
+    .bg-circle2 {
+      width: 220px; height: 220px;
+      right: -80px; top: 320px;
+      background: radial-gradient(circle, #00bcd4 60%, #b2ebf2 100%);
+      animation-delay: 2s;
+    }
+    .bg-circle3 {
+      width: 180px; height: 180px;
+      left: 60vw; bottom: -60px;
+      background: radial-gradient(circle, #26c6da 60%, #e0f7fa 100%);
+      animation-delay: 4s;
+    }
+    @keyframes float {
+      0% { transform: translateY(0) scale(1);}
+      100% { transform: translateY(-30px) scale(1.08);}
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 48px auto;
+      padding: 32px 24px;
+      background: rgba(255,255,255,0.82);
+      border-radius: 22px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+      position: relative;
+      z-index: 1;
+    }
+    h2 {
+      text-align: center;
+      color: #006064;
+      margin-bottom: 36px;
+      letter-spacing: 2px;
+      font-size: 2.5em;
+      font-family: 'Agency FB', 'Segoe UI', Arial, sans-serif;
+      font-weight: 700;
+      text-shadow: 0 2px 12px #b2ebf2;
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 28px;
+      z-index: 1;
+      position: relative;
+    }
+    @media (max-width: 1000px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 700px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0,188,212,0.18);
+      padding: 32px 36px;
+      margin: 0;
+      transition: transform 0.18s, box-shadow 0.18s;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      color: #fff;
+      min-height: 120px;
+      position: relative;
+      overflow: hidden;
+      font-family: 'Agency FB', 'Segoe UI', Arial, sans-serif;
+      font-size: 1.1em;
+      z-index: 1;
+    }
+    /* 3 harmonious gradients for columns */
+    .card:nth-child(3n+1) {
+      background: linear-gradient(100deg, #00bcd4 0%, #4dd0e1 100%);
+    }
+    .card:nth-child(3n+2) {
+      background: linear-gradient(100deg, #26c6da 0%, #b2ebf2 100%);
+    }
+    .card:nth-child(3n) {
+      background: linear-gradient(100deg, #0097a7 0%, #80deea 100%);
+    }
+    .card:hover {
+      transform: translateY(-6px) scale(1.04);
+      box-shadow: 0 10px 36px rgba(0,188,212,0.28);
+      filter: brightness(1.08);
+    }
+    .label {
+      font-weight: bold;
+      color: #e0f7fa;
+      margin-bottom: 10px;
+      font-size: 1.25em;
+      letter-spacing: 1px;
+      font-family: 'Agency FB', 'Segoe UI', Arial, sans-serif;
+      text-shadow: 0 1px 8px #00838f44;
+    }
+    .value {
+      color: #ffffff;
+      font-size: 2em;
+      margin-top: 0;
+      line-height: 1.2;
+      font-family: 'Agency FB', 'Segoe UI', Arial, sans-serif;
+      text-shadow: 0 2px 10px #00bcd488;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-circle bg-circle1"></div>
+  <div class="bg-circle bg-circle2"></div>
+  <div class="bg-circle bg-circle3"></div>
+  <div class='container'>
+    <h2>Smart Water Management Dashboard</h2>
+    <div class='dashboard-grid'>
+      <div class='card'><div class='label'>Temperature</div><div class='value' id='temperature'>Loading...</div></div>
+      <div class='card'><div class='label'>Humidity</div><div class='value' id='humidity'>Loading...</div></div>
+      <div class='card'><div class='label'>Water Level Distance</div><div class='value' id='distance'>Loading...</div></div>
+      <div class='card'><div class='label'>Rain Sensor</div><div class='value' id='rain'>Loading...</div></div>
+      <div class='card'><div class='label'>TDS Voltage</div><div class='value' id='tdsVoltage'>Loading...</div></div>
+      <div class='card'><div class='label'>TDS Estimate</div><div class='value' id='tdsValue'>Loading...</div></div>
+      <div class='card'><div class='label'>pH + Soil Moisture</div><div class='value' id='phSoil'>Loading...</div></div>
+    </div>
+  </div>
+  <script>
+    function updateData() {
+      fetch("/data")
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('temperature').innerText = data.temperature + " °C";
+          document.getElementById('humidity').innerText = data.humidity + " %";
+          document.getElementById('distance').innerText = data.distance + " cm";
+          document.getElementById('rain').innerText = data.rain + (data.rain < 1000 ? " - Raining" : " - Dry");
+          document.getElementById('tdsVoltage').innerText = data.tdsVoltage + " V";
+          document.getElementById('tdsValue').innerText = data.tdsValue + " ppm";
+          document.getElementById('phSoil').innerText = data.phSoil;
+        });
+    }
+    setInterval(updateData, 3000);
+    updateData();
+  </script>
+</body>
+</html>
